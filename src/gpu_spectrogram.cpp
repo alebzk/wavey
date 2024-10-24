@@ -45,7 +45,9 @@ GpuSpectrogram::GpuSpectrogram(const Spectrogram& spectrogram, int samplerate) {
         glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         glPixelStorei(GL_PACK_ALIGNMENT, 2);
         glPixelStorei(GL_UNPACK_ALIGNMENT, 2);
+#ifndef __APPLE__
         glTexStorage3D(GL_TEXTURE_2D_ARRAY, 1, GL_R16, width, num_spectra_per_tile, num_tiles);
+#endif
     }
 
     std::vector<vertex> vertices;

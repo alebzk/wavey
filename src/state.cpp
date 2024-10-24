@@ -12,7 +12,11 @@ namespace {
 uint64_t GetModTime(std::string path) {
     struct stat statbuf;
     if (stat(path.c_str(), &statbuf) == 0) {
+#ifdef __APPLE__
+        return 1000000000 * statbuf.st_mtimespec.tv_sec + statbuf.st_mtimespec.tv_nsec;
+#else
         return 1000000000 * statbuf.st_mtim.tv_sec + statbuf.st_mtim.tv_nsec;
+#endif
     }
     return 0;
 }
@@ -131,16 +135,20 @@ void State::ReloadFiles() {
 
 void State::MonitorTrack(Track& t) {
     int wd = track_change_notifier_->Watch(t.path);
-    t.watch_id_ = wd;
+    if (wd != -1)
+        t.watch_id_ = wd;
 }
 
 void State::UnmonitorTrack(Track& t) {
-    track_change_notifier_->Unwatch(*t.watch_id_);
-    t.watch_id_.reset();
+    if (t.watch_id_) {
+        track_change_notifier_->Unwatch(*t.watch_id_);
+        t.watch_id_.reset();
+    }
 }
 
 void State::StartMonitoringTrackChange() {
-    track_change_notifier_.emplace([this](int id) {
+    track_change_notifier_ = CreateFileModificationNotifier(
+        [this](int id) {
         for (Track& t : tracks) {
             if (t.watch_id_ == id) {
                 t.Reload();

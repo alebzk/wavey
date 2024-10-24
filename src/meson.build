@@ -23,4 +23,13 @@ src = files(
   'zoom_window.cpp'
   )
 
-executable('wavey', src, dependencies : [gl, glm, sndfile, fftw, openmp, sdl2, imgui, implot], install : true)
+cpp_args = []
+
+deps = [gl, glm, sndfile, fftw, openmp, sdl2, imgui, implot]
+
+if host_machine.system() == 'darwin'
+  cpp_args += ['-DGL_SILENCE_DEPRECATION']
+endif
+
+executable('wavey', src, dependencies : deps, cpp_args : cpp_args,
+           install : true)

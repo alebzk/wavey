@@ -3,7 +3,12 @@
 
 #include "spectrogram.hpp"
 #define GL_GLEXT_PROTOTYPES
+#if defined(__APPLE__)
+#include <OpenGL/gl3.h>
+#include <OpenGL/gl3ext.h>
+#else
 #include <GL/gl.h>
+#endif
 #include <vector>
 
 class GpuSpectrogram {

@@ -55,6 +55,10 @@ Linux tool to analyze and play audio files.
 #### Build dependencies Arch Linux
 ``` pacman -S glm sdl2 libsndfile fftw ```
 
+#### Build dependencies MacOS
+- Install **Command Line Developers Tool** (type e.g., `c++`, it triggers the installer)
+- Install `brew`
+- ``` brew install pkg-config cmake libomp ninja sdl2 glfw glm libsndfile fftw ```
 
 #### Get the source, build and install
 ```

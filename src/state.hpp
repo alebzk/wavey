@@ -43,7 +43,7 @@ class State {
    public:
     State(AudioSystem* audio, std::mutex& fftw_mutex)
         : audio(audio),
-          file_load_server([this](const std::string& file_name) { this->LoadFile(file_name); }),
+          file_load_server(CreateFileLoadServer([this](const std::string& file_name) { this->LoadFile(file_name); })),
           fftw_mutex_(fftw_mutex) {}
     void LoadFile(const std::string& file_name, std::optional<std::string> label = std::nullopt);
     void UnloadFiles();
@@ -84,7 +84,7 @@ class State {
     void MoveTrackUp();
     void MoveTrackDown();
 
-    bool DoAutoRefresh() const { return track_change_notifier_.has_value(); }
+    bool DoAutoRefresh() const { return !!track_change_notifier_; }
     void StartMonitoringTrackChange();
     void StopMonitoringTrackChange();
 
@@ -100,13 +100,12 @@ class State {
     void UnmonitorTrack(Track& t);
 
     AudioSystem* audio;
-    int next_id = 0;
     float cursor = 0.f;
     std::optional<float> selection;
     std::optional<int> selected_track;
 
-    std::optional<FileModificationNotifier> track_change_notifier_;
-    FileLoadServer file_load_server;
+    std::unique_ptr<FileModificationNotifier> track_change_notifier_;
+    std::unique_ptr<FileLoadServer> file_load_server;
 
     std::mutex& fftw_mutex_;
 };

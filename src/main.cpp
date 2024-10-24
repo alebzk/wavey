@@ -71,7 +71,7 @@ int main(int argc, char** argv) {
     }
     if (run_file_load_server) {
         // Load input files in an already running Wavey instance if available.
-        if (FileLoadServer::Load(argc - optind, argv + optind))
+        if (CheckIfFilesLoaded(argc - optind, argv + optind))
             return 0;
     }
 
@@ -119,17 +119,15 @@ int main(int argc, char** argv) {
     style.Colors[ImGuiCol_FrameBgActive] = ImVec4(0.5f, 0.9f, 0.5f, 0.2f);
     style.Colors[ImGuiCol_SliderGrab] = ImVec4(0.5f, 0.9f, 0.5f, 0.8f);
     style.Colors[ImGuiCol_SliderGrabActive] = ImVec4(0.5f, 0.9f, 0.5f, 1.0f);
-
 #if DOCKING
     if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable) {
         style.WindowRounding = 0.0f;
         style.Colors[ImGuiCol_WindowBg].w = 1.0f;
     }
 #endif
-
     ImGui_ImplSDL2_InitForOpenGL(window, gl_context);
+    // std::cout << "ImGui_ImplSDL2_InitForOpenGL " << ok << std::endl;
     ImGui_ImplOpenGL3_Init("#version 300 es");
-
     Renderer* renderer = Renderer::Create();
 
     bool view_spectrogram = false;
